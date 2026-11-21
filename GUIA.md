@@ -139,7 +139,8 @@ En la pestaña **Ingresos y egresos** (administrador y cajero) se registra todo 
 **Ejecutar una provisión:** el botón **✔ Ejecutar** pide la fecha real, el valor real (puede ser distinto al provisionado) y la cuenta. Desde ese momento pasa al saldo real. El valor y la fecha provisionados quedan guardados.
 
 **Otros botones**
-- **Traer ventas de caja** pasa los vales cobrados del día como ingresos ejecutados, una línea por cuenta, sin duplicar.
+- **Cada cobro en caja se registra solo** como ingreso ejecutado en la cuenta elegida (concepto "Venta del restaurante", con el número de vale).
+- **Sincronizar ventas** completa, sin duplicar, los vales pagados que hayan quedado sin ingreso (por ejemplo, por una falla de internet al cobrar).
 - **Excel (CSV)** descarga los registros del período.
 
 Los registros no se borran: el administrador los anula con motivo.
