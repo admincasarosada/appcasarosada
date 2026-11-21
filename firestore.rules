@@ -46,6 +46,8 @@ service cloud.firestore {
     // Menú y mesas: todos los ven, solo el administrador los cambia
     match /productos/{id} { allow read: if activo(); allow write: if esAdmin(); }
     match /mesas/{id}     { allow read: if activo(); allow write: if esAdmin(); }
+    // Menú del día (un documento por fecha): todos lo ven, solo el administrador lo define
+    match /menus/{fecha}  { allow read: if activo(); allow write: if esAdmin(); }
 
     // Vales
     match /vales/{id} {
