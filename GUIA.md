@@ -110,6 +110,16 @@ Los permisos se controlan **también en el servidor** con `firestore.rules`. Aun
 6. Si alguien presenta un vale ya pagado o anulado, la caja lo ve de inmediato con el sello correspondiente.
 7. Los vales **nunca se borran**: solo el administrador los anula, con motivo, y todo queda en reportes.
 
+## Domicilios
+
+- **Crear un domicilio:** en **Mesas**, botón **🛵 Nuevo domicilio**. Disponible para administradores, cajeros y meseros.
+- **Datos que se piden:** celular, nombre, dirección, barrio o indicaciones y, si aplica, el valor del domicilio (envío).
+- **Clientes conocidos:** si el cliente autoriza guardar sus datos (Ley 1581 de 2012), la próxima vez basta con escribir su celular y se cargan solos.
+- **Precios:** el domicilio se cobra con los precios para llevar.
+- **Cocina:** lo ve marcado con 🛵 y la dirección. Al terminar, lo marca como **Despachado**.
+- **Caja:** como todo pedido, pasa por caja para el cobro y el medio de pago. Se puede filtrar por Mesas, Mostrador o Domicilios.
+- **Reportes:** muestran las ventas por tipo de servicio (mesas, para llevar y domicilios), con número de vales, ventas, ticket promedio y porcentaje.
+
 ## Ingresos y egresos
 
 En la pestaña **Ingresos y egresos** (administrador y cajero) se registra todo el dinero que entra y sale.

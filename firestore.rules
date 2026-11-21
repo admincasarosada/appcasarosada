@@ -48,6 +48,11 @@ service cloud.firestore {
     match /mesas/{id}     { allow read: if activo(); allow write: if esAdmin(); }
     // Menú del día (un documento por fecha): todos lo ven, solo el administrador lo define
     match /menus/{fecha}  { allow read: if activo(); allow write: if esAdmin(); }
+    // Clientes de domicilio (solo con autorización de datos): meseros, caja y administración
+    match /clientes/{tel} {
+      allow read, create, update: if tieneRol(['admin', 'mesero', 'cajero']);
+      allow delete: if esAdmin();
+    }
 
     // Vales
     match /vales/{id} {
@@ -60,12 +65,12 @@ service cloud.firestore {
         // Cajero: cobrar (no puede anular ni reabrir)
         || (tieneRol(['cajero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado in ['abierto', 'pagado']
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente']))
         // Mesero: agregar productos y avisar que pidieron la cuenta, solo con el vale abierto
         || (tieneRol(['mesero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado == 'abierto'
             && request.resource.data.items.size() >= resource.data.items.size()
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente']))
         // Cocina: solo el estado de preparación
         || (tieneRol(['cocina']) && cambia(['cocinaEstado', 'actualizado']));
       allow delete: if false; // los vales nunca se borran: se anulan con motivo
