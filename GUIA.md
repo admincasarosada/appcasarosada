@@ -110,6 +110,15 @@ Los permisos se controlan **también en el servidor** con `firestore.rules`. Aun
 6. Si alguien presenta un vale ya pagado o anulado, la caja lo ve de inmediato con el sello correspondiente.
 7. Los vales **nunca se borran**: solo el administrador los anula, con motivo, y todo queda en reportes.
 
+## Atención: cocina, servido y envío a caja
+
+- **Cocina** ve solo los pedidos por despachar: mesas, mostrador y domicilios. Cada pedido muestra el tipo de servicio, el número de mesa o la dirección, las notas y los ajustes de cada plato, y un cronómetro.
+- **DESPACHAR:** al sacar el plato o la caja, cocina presiona DESPACHAR y elige quién lo recibe (los meseros activos u "Otro"). Ese dato queda en el historial del vale y en reportes.
+- **Cronómetro:** cada pedido muestra la hora de carga y el tiempo transcurrido. Se pone naranja a los 15 min y rojo a los 25 min. Se detiene cuando el mesero marca **✓ Servido** (mesa) o **✓ Entregado** (domicilio o mostrador). Si se agregan adicionales después de servir, van a cocina y su cronómetro corre aparte.
+- **Enviar a caja:** cuando el cliente se va, o el domiciliario regresa, el mesero presiona **💵 Enviar a caja**. La mesa queda libre y el pedido deja de aparecerle. En caja queda marcado como "ENVIADO A CAJA" para cobrarlo.
+- **Caja** muestra el historial de atención de cada vale: quién lo tomó, quién lo recibió de cocina, cuánto esperó el cliente, quién lo envió a caja y quién cobró.
+- Los nombres que aparecen al despachar son los de los usuarios con rol Mesero. Se cambian en Administración → Usuarios (✎ junto al nombre).
+
 ## Domicilios
 
 - **Crear un domicilio:** en **Mesas**, botón **🛵 Nuevo domicilio**. Disponible para administradores, cajeros y meseros.
