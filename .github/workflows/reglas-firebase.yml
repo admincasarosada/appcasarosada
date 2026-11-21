@@ -6,7 +6,7 @@ name: Publicar reglas de Firebase
 on:
   push:
     branches: [main]
-    paths: [firestore.rules, firebase.json]
+    paths: [firestore.rules, scripts/publicar-reglas.js, .github/workflows/reglas-firebase.yml]
   workflow_dispatch:
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Llave de Firebase
         env:
           LLAVE: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
@@ -26,7 +26,9 @@ jobs:
       - name: Publicar reglas
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/llave.json
-        run: npx --yes firebase-tools@latest deploy --only firestore:rules --project appcasarosada --non-interactive
+        run: |
+          npm install --no-save --no-audit --no-fund firebase-admin@13
+          node scripts/publicar-reglas.js
       - name: Borrar llave
         if: always()
         run: rm -f "$RUNNER_TEMP/llave.json"
