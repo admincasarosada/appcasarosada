@@ -71,7 +71,7 @@ La opción más fácil es **Netlify Drop**, donde solo se arrastra la carpeta:
 
 Al ingresar, el usuario no distingue mayúsculas: AdminP y adminp son lo mismo. La contraseña sí distingue mayúsculas.
 
-**Contraseñas:** solo los administradores pueden cambiarlas, en **Usuarios y permisos → Cambiar clave**. Para eso se pide la contraseña actual de ese usuario. Los meseros no tienen ninguna opción para cambiar su contraseña. Si se olvida la contraseña de un mesero: desactívelo y créele un usuario nuevo (por ejemplo, Mesero1b).
+**Contraseñas:** solo los administradores las cambian, en **Usuarios y permisos → Cambiar clave**, sin necesidad de conocer la anterior. Si el usuario tiene la app abierta, se le cierra la sesión y debe ingresar con la nueva. Los meseros no tienen ninguna opción para cambiar contraseñas. **Eliminar** quita el acceso de un usuario; su nombre se conserva en los tickets y reportes anteriores. No se puede eliminar al único administrador ni a uno mismo.
 
 ## Paso 5. Instalarla en celulares y tablets
 

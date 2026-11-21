@@ -40,7 +40,12 @@ service cloud.firestore {
             && !exists(/databases/$(database)/documents/config/setup)
             && request.resource.data.rol == 'admin');
       allow update: if esAdmin();
-      allow delete: if false;
+      allow delete: if esAdmin() && uid != request.auth.uid;
+    }
+    // Qué cuenta de acceso usa cada nombre de usuario (se consulta antes de ingresar)
+    match /logins/{usuario} {
+      allow read: if true;
+      allow write: if esAdmin();
     }
 
     // Menú y mesas: todos los ven, solo el administrador los cambia
