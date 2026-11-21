@@ -1,0 +1,87 @@
+rules_version = '2';
+// Reglas de seguridad de Casa Rosada POS.
+// Hacen que los permisos por rol se cumplan en el servidor, no solo en la pantalla.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function firmado() { return request.auth != null; }
+    function perfilRef() { return /databases/$(database)/documents/users/$(request.auth.uid); }
+    function activo() { return firmado() && exists(perfilRef()) && get(perfilRef()).data.activo == true; }
+    function rol() { return get(perfilRef()).data.rol; }
+    function esAdmin() { return activo() && rol() == 'admin'; }
+    function tieneRol(roles) { return activo() && rol() in roles; }
+    function cambia(campos) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(campos); }
+
+    // Bandera de configuración inicial (se crea una sola vez con el primer administrador)
+    match /config/setup {
+      allow read: if true;
+      allow create: if firmado()
+        && !exists(/databases/$(database)/documents/config/setup)
+        && getAfter(perfilRef()).data.rol == 'admin';
+      allow update, delete: if false;
+    }
+    // Consecutivo de vales
+    match /config/contador {
+      allow read: if activo();
+      allow create, update: if tieneRol(['admin', 'mesero', 'cajero']);
+    }
+    // Datos del negocio que salen en el vale
+    match /config/negocio {
+      allow read: if activo();
+      allow create: if esAdmin() || (firmado() && !exists(/databases/$(database)/documents/config/setup));
+      allow update: if esAdmin();
+    }
+
+    // Usuarios: solo el administrador los crea o modifica
+    match /users/{uid} {
+      allow read: if activo();
+      allow create: if esAdmin()
+        || (firmado() && request.auth.uid == uid
+            && !exists(/databases/$(database)/documents/config/setup)
+            && request.resource.data.rol == 'admin');
+      allow update: if esAdmin();
+      allow delete: if false;
+    }
+
+    // Menú y mesas: todos los ven, solo el administrador los cambia
+    match /productos/{id} { allow read: if activo(); allow write: if esAdmin(); }
+    match /mesas/{id}     { allow read: if activo(); allow write: if esAdmin(); }
+
+    // Vales
+    match /vales/{id} {
+      allow read: if activo();
+      allow create: if tieneRol(['admin', 'mesero', 'cajero'])
+        && request.resource.data.estado == 'abierto';
+      allow update: if
+        // Administrador: todo
+        esAdmin()
+        // Cajero: cobrar (no puede anular ni reabrir)
+        || (tieneRol(['cajero']) && resource.data.estado == 'abierto'
+            && request.resource.data.estado in ['abierto', 'pagado']
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha']))
+        // Mesero: agregar productos y avisar que pidieron la cuenta, solo con el vale abierto
+        || (tieneRol(['mesero']) && resource.data.estado == 'abierto'
+            && request.resource.data.estado == 'abierto'
+            && request.resource.data.items.size() >= resource.data.items.size()
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta']))
+        // Cocina: solo el estado de preparación
+        || (tieneRol(['cocina']) && cambia(['cocinaEstado', 'actualizado']));
+      allow delete: if false; // los vales nunca se borran: se anulan con motivo
+    }
+    // Ingresos y egresos: solo administrador y cajero.
+    // El cajero registra y corrige lo suyo del mismo día; solo el administrador anula. Nunca se borran.
+    match /movimientos/{id} {
+      allow read: if tieneRol(['admin', 'cajero']);
+      allow create: if tieneRol(['admin', 'cajero'])
+        && request.resource.data.registradoUid == request.auth.uid
+        && request.resource.data.estado == 'activo'
+        && request.resource.data.valor is number && request.resource.data.valor > 0
+        && request.resource.data.tipo in ['ingreso', 'egreso'];
+      allow update: if esAdmin()
+        || (tieneRol(['cajero']) && resource.data.registradoUid == request.auth.uid
+            && resource.data.estado == 'activo' && request.resource.data.estado == 'activo'
+            && request.resource.data.registradoUid == resource.data.registradoUid);
+      allow delete: if false;
+    }
+  }
+}
