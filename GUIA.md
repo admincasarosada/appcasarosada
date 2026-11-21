@@ -65,7 +65,7 @@ La opción más fácil es **Netlify Drop**, donde solo se arrastra la carpeta:
 | Mesero3 | Mesero |
 
 3. En **Administración**, configure también:
-   - **Datos del negocio:** NIT, dirección y teléfono que salen en el vale.
+   - **Datos del negocio:** NIT, dirección y teléfono que salen en el ticket.
    - **Mesas.**
    - **Menú y precios.**
 
@@ -87,11 +87,11 @@ Queda como un ícono más, igual que una app.
 | Función | Administrador | Cajero | Mesero | Cocina |
 |---|:-:|:-:|:-:|:-:|
 | Ver mesas y tomar pedidos | ✅ | ✅ | ✅ | — |
-| Imprimir vale y comanda | ✅ | ✅ | ✅ | — |
+| Imprimir ticket y comanda | ✅ | ✅ | ✅ | — |
 | Pantalla de cocina | ✅ | — | — | ✅ |
-| Cobrar vales | ✅ | ✅ | — | — |
+| Cobrar tickets | ✅ | ✅ | — | — |
 | Quitar productos ya enviados (con motivo) | ✅ | — | — | — |
-| Anular vales (con motivo) | ✅ | — | — | — |
+| Anular tickets (con motivo) | ✅ | — | — | — |
 | Ingresos y egresos: registrar y corregir lo propio del día | ✅ | ✅ | — | — |
 | Ingresos y egresos: editar cualquiera y anular | ✅ | — | — | — |
 | Reportes del día | ✅ | ✅ | — | — |
@@ -100,23 +100,23 @@ Queda como un ícono más, igual que una app.
 
 Los permisos se controlan **también en el servidor** con `firestore.rules`. Aunque alguien manipule la página, un mesero no puede cobrar, anular ni cambiar precios del menú.
 
-## Cómo funciona el vale
+## Cómo funciona el ticket
 
-1. El mesero toca la mesa, agrega productos (con notas como "sin cebolla") y toca **Enviar a cocina**. Se crea el **vale con número consecutivo** y el pedido aparece en la pantalla de cocina, con un aviso sonoro.
-2. Si la mesa pide algo más, se agrega al **mismo vale**. En cocina aparece marcado como "NUEVO".
+1. El mesero toca la mesa, agrega productos (con notas como "sin cebolla") y toca **Enviar a cocina**. Se crea el **ticket con número consecutivo** y el pedido aparece en la pantalla de cocina, con un aviso sonoro.
+2. Si la mesa pide algo más, se agrega al **mismo ticket**. En cocina aparece marcado como "NUEVO".
 3. Cocina marca el pedido como **Empezar → Listo → Entregado**. En el plano de mesas aparece la etiqueta "LISTO".
-4. Cuando el cliente pide la cuenta, el mesero toca **Pidió la cuenta** (la mesa se pone naranja) e imprime el **vale del cliente con código QR**.
-5. En caja se **escanea el QR** con la cámara o con un lector de códigos USB, o se escribe el número. Se elige el medio de pago y se confirma. El vale queda **PAGADO** con fecha, hora, medio y quién cobró.
-6. Si alguien presenta un vale ya pagado o anulado, la caja lo ve de inmediato con el sello correspondiente.
-7. Los vales **nunca se borran**: solo el administrador los anula, con motivo, y todo queda en reportes.
+4. Cuando el cliente pide la cuenta, el mesero toca **Pidió la cuenta** (la mesa se pone naranja) e imprime el **ticket del cliente con código QR**.
+5. En caja se **escanea el QR** con la cámara o con un lector de códigos USB, o se escribe el número. Se elige el medio de pago y se confirma. El ticket queda **PAGADO** con fecha, hora, medio y quién cobró.
+6. Si alguien presenta un ticket ya pagado o anulado, la caja lo ve de inmediato con el sello correspondiente.
+7. Los tickets **nunca se borran**: solo el administrador los anula, con motivo, y todo queda en reportes.
 
 ## Atención: cocina, servido y envío a caja
 
 - **Cocina** ve solo los pedidos por despachar: mesas, mostrador y domicilios. Cada pedido muestra el tipo de servicio, el número de mesa o la dirección, las notas y los ajustes de cada plato, y un cronómetro.
-- **DESPACHAR:** al sacar el plato o la caja, cocina presiona DESPACHAR y elige quién lo recibe (los meseros activos u "Otro"). Ese dato queda en el historial del vale y en reportes.
+- **DESPACHAR:** al sacar el plato o la caja, cocina presiona DESPACHAR y elige quién lo recibe (los meseros activos u "Otro"). Ese dato queda en el historial del ticket y en reportes.
 - **Cronómetro:** cada pedido muestra la hora de carga y el tiempo transcurrido. Se pone naranja a los 15 min y rojo a los 25 min. Se detiene cuando el mesero marca **✓ Servido** (mesa) o **✓ Entregado** (domicilio o mostrador). Si se agregan adicionales después de servir, van a cocina y su cronómetro corre aparte.
 - **Enviar a caja:** cuando el cliente se va, o el domiciliario regresa, el mesero presiona **💵 Enviar a caja**. La mesa queda libre y el pedido deja de aparecerle. En caja queda marcado como "ENVIADO A CAJA" para cobrarlo.
-- **Caja** muestra el historial de atención de cada vale: quién lo tomó, quién lo recibió de cocina, cuánto esperó el cliente, quién lo envió a caja y quién cobró.
+- **Caja** muestra el historial de atención de cada ticket: quién lo tomó, quién lo recibió de cocina, cuánto esperó el cliente, quién lo envió a caja y quién cobró.
 - Los nombres que aparecen al despachar son los de los usuarios con rol Mesero. Se cambian en Administración → Usuarios (✎ junto al nombre).
 
 ## Domicilios
@@ -127,7 +127,7 @@ Los permisos se controlan **también en el servidor** con `firestore.rules`. Aun
 - **Precios:** el domicilio se cobra con los precios para llevar.
 - **Cocina:** lo ve marcado con 🛵 y la dirección. Al terminar, lo marca como **Despachado**.
 - **Caja:** como todo pedido, pasa por caja para el cobro y el medio de pago. Se puede filtrar por Mesas, Mostrador o Domicilios.
-- **Reportes:** muestran las ventas por tipo de servicio (mesas, para llevar y domicilios), con número de vales, ventas, ticket promedio y porcentaje.
+- **Reportes:** muestran las ventas por tipo de servicio (mesas, para llevar y domicilios), con número de tickets, ventas, ticket promedio y porcentaje.
 
 ## Ingresos y egresos
 
@@ -158,8 +158,8 @@ En la pestaña **Ingresos y egresos** (administrador y cajero) se registra todo 
 **Ejecutar una provisión:** el botón **✔ Ejecutar** pide la fecha real, el valor real (puede ser distinto al provisionado) y la cuenta. Desde ese momento pasa al saldo real. El valor y la fecha provisionados quedan guardados.
 
 **Otros botones**
-- **Cada cobro en caja se registra solo** como ingreso ejecutado en la cuenta elegida (concepto "Venta del restaurante", con el número de vale).
-- **Sincronizar ventas** completa, sin duplicar, los vales pagados que hayan quedado sin ingreso (por ejemplo, por una falla de internet al cobrar).
+- **Cada cobro en caja se registra solo** como ingreso ejecutado en la cuenta elegida (concepto "Venta del restaurante", con el número de ticket).
+- **Sincronizar ventas** completa, sin duplicar, los tickets pagados que hayan quedado sin ingreso (por ejemplo, por una falla de internet al cobrar).
 - **Excel (CSV)** descarga los registros del período.
 
 Los registros no se borran: el administrador los anula con motivo.
@@ -168,9 +168,9 @@ Los registros no se borran: el administrador los anula con motivo.
 
 La app usa la impresión normal del navegador. Funciona con impresoras térmicas de 80 mm que estén instaladas en el equipo (USB, red o Bluetooth en Android con la app del fabricante). En el cuadro de impresión elija la impresora térmica y tamaño 80 mm.
 
-## Importante: el vale no es factura
+## Importante: el ticket no es factura
 
-El vale es un **documento interno de control**. Para la DIAN, las ventas deben soportarse con factura electrónica o documento equivalente POS electrónico, emitido por un proveedor habilitado. Ese será el paso de integración contable.
+El ticket es un **documento interno de control**. Para la DIAN, las ventas deben soportarse con factura electrónica o documento equivalente POS electrónico, emitido por un proveedor habilitado. Ese será el paso de integración contable.
 
 ## Próximos módulos planeados
 
