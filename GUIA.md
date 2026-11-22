@@ -196,3 +196,9 @@ El ticket es un **documento interno de control**. Para la DIAN, las ventas deben
 - Tiquetera prepagada y créditos de clientes conocidos (saldo, abonos, cupo).
 - Base de datos de clientes, con autorización de Habeas Data.
 - Integración con software contable / facturación electrónica.
+
+
+## Novedades v1.24.0
+- **Modo mesero (administración y caja):** botón «🍽 Activar/Desactivar modo mesero» arriba. Encendido muestra Nueva solicitud, En curso y Cocina para tomar y despachar pedidos como cualquier mesero; apagado solo se ven las pestañas propias del rol. Los pedidos quedan a nombre del usuario que los toma.
+- **Estado de solicitudes:** nueva columna «⏰ Pendientes de cobrar» con la fecha en que se pidió el servicio (tickets de días anteriores sin cerrar), «Cobrados hoy» incluye tickets viejos cobrados hoy, y abajo el plano en vivo de Piso 1 y Piso 2.
+- **Domicilios pagados por QR / llave:** al cerrar el domicilio se muestra el QR del negocio y la llave para que el cliente pague, y el botón «📷 Tomar foto del soporte» guarda la foto como evidencia. En Caja aparece «📎 Ver soporte». El QR, la llave y la cuenta de destino se configuran en Administración → Datos del negocio.
