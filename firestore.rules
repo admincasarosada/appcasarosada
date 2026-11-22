@@ -121,6 +121,13 @@ service cloud.firestore {
       allow read, create, update: if activo() && col in ['ensayo_vales', 'ensayo_movimientos', 'ensayo_soportes', 'ensayo_creditoMovs', 'ensayo_clientes', 'ensayo_config', 'ensayo_menus'];
       allow delete: if esAdmin() && col in ['ensayo_vales', 'ensayo_movimientos', 'ensayo_soportes', 'ensayo_creditoMovs', 'ensayo_clientes', 'ensayo_config', 'ensayo_menus'];
     }
+    // Suscripciones de notificaciones push (una por celular). Cada usuario registra la suya;
+    // todos los usuarios activos pueden leerlas para avisarse entre sí cuando cambia un pedido.
+    match /pushSubs/{id} {
+      allow read: if activo();
+      allow create, update: if activo() && request.resource.data.uid == request.auth.uid;
+      allow delete: if activo();
+    }
     // Ingresos y egresos: solo administrador y cajero.
     // El cajero registra y corrige lo suyo del mismo día; solo el administrador anula. Nunca se borran.
     match /movimientos/{id} {

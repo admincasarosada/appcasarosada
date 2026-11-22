@@ -1,0 +1,59 @@
+# Publica el servidor de notificaciones push (Cloudflare Worker) y deja su dirección en push-config.json.
+# Requiere los secretos CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID.
+# La primera vez crea las llaves VAPID y las guarda como secretos del Worker (nunca quedan en el repositorio).
+name: Servidor de notificaciones
+
+on:
+  push:
+    branches: [main]
+    paths: [push/**, .github/workflows/push-worker.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Revisar secretos
+        id: sec
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Faltan los secretos CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID: no se publica todavía."; echo "ok=no" >> $GITHUB_OUTPUT
+          else echo "ok=si" >> $GITHUB_OUTPUT; fi
+      - name: Publicar Worker
+        if: steps.sec.outputs.ok == 'si'
+        working-directory: push
+        run: npx --yes wrangler@3 deploy
+      - name: Llaves VAPID (solo la primera vez)
+        if: steps.sec.outputs.ok == 'si'
+        working-directory: push
+        run: |
+          if npx --yes wrangler@3 secret list | grep -q VAPID_PRIVATE_JWK; then echo "Las llaves ya existen"; exit 0; fi
+          node -e '
+            const c=require("crypto"),fs=require("fs");const {publicKey,privateKey}=c.generateKeyPairSync("ec",{namedCurve:"prime256v1"});
+            const pub=publicKey.export({format:"jwk"}),prv=privateKey.export({format:"jwk"});
+            fs.writeFileSync(process.env.RUNNER_TEMP+"/pub.txt",Buffer.concat([Buffer.from([4]),Buffer.from(pub.x,"base64url"),Buffer.from(pub.y,"base64url")]).toString("base64url"));
+            fs.writeFileSync(process.env.RUNNER_TEMP+"/prv.txt",JSON.stringify(prv));'
+          npx --yes wrangler@3 secret put VAPID_PUBLIC < "$RUNNER_TEMP/pub.txt"
+          npx --yes wrangler@3 secret put VAPID_PRIVATE_JWK < "$RUNNER_TEMP/prv.txt"
+          rm -f "$RUNNER_TEMP/pub.txt" "$RUNNER_TEMP/prv.txt"
+      - name: Guardar la dirección del servidor
+        if: steps.sec.outputs.ok == 'si'
+        run: |
+          SUB=$(curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" | jq -r '.result.subdomain')
+          if [ -z "$SUB" ] || [ "$SUB" = "null" ]; then echo "La cuenta aún no tiene subdominio workers.dev"; exit 1; fi
+          URL="https://casarosada-push.$SUB.workers.dev"
+          echo "{\"url\":\"$URL\"}" > push-config.json
+          curl -s "$URL/vapid"
+          if git diff --quiet -- push-config.json 2>/dev/null && git ls-files --error-unmatch push-config.json >/dev/null 2>&1; then echo "Sin cambios"; exit 0; fi
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add push-config.json; git commit -m "Dirección del servidor de notificaciones"; git push
