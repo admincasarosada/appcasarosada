@@ -1,6 +1,6 @@
 // Casa Rosada POS – la app abre aunque falle internet un momento.
 // Red primero: cada vez que hay conexión se toma la versión más nueva publicada en GitHub.
-const CACHE = 'casarosada-pos-v83';
+const CACHE = 'casarosada-pos-v84';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './logo.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
@@ -20,11 +20,13 @@ self.addEventListener('push', e => {
       body: d.d || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: d.k || undefined, renotify: true, requireInteraction: true, vibrate: [300, 120, 300]});
   }));
 });
-// Al tocar una notificación (por ejemplo, ticket pendiente de cobro) se abre o enfoca la app
+// Al tocar una notificación se abre la app instalada (pantalla de inicio) si existe; si no, el navegador.
+// Las ventanas de la app instalada se reconocen porque abren con ?app=1 (start_url del manifiesto).
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   e.waitUntil(self.clients.matchAll({type: 'window', includeUncontrolled: true}).then(cs => {
-    for (const c of cs) { if ('focus' in c) return c.focus(); }
-    return self.clients.openWindow('./');
+    const app = cs.find(c => c.url.includes('app=1')) || cs[0];
+    if (app && 'focus' in app) return app.focus();
+    return self.clients.openWindow('./?app=1');
   }));
 });
