@@ -52,7 +52,12 @@ service cloud.firestore {
     match /productos/{id} { allow read: if activo(); allow write: if esAdmin(); }
     match /mesas/{id}     { allow read: if activo(); allow write: if esAdmin(); }
     // Menú del día (un documento por fecha): todos lo ven, solo el administrador lo define
-    match /menus/{fecha}  { allow read: if activo(); allow write: if esAdmin(); }
+    match /menus/{fecha}  {
+      allow read: if activo();
+      allow write: if esAdmin();
+      // Cocina (y caja en modo mesero) solo marcan lo que «se acabó»
+      allow update: if tieneRol(['cocina', 'cajero']) && cambia(['agotados', 'agotadosEn']);
+    }
     // Clientes de domicilio (solo con autorización de datos): meseros, caja y administración
     match /clientes/{tel} {
       allow read, create, update: if tieneRol(['admin', 'mesero', 'cajero']);
