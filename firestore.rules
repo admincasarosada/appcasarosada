@@ -115,6 +115,12 @@ service cloud.firestore {
       allow update: if esAdmin();
       allow delete: if false;
     }
+    // Modo «No guardar datos» (ensayo): copias de trabajo separadas de los registros reales.
+    // Cualquier usuario activo opera en ellas; solo el administrador las borra al terminar el ensayo.
+    match /{col}/{id} {
+      allow read, create, update: if activo() && col in ['ensayo_vales', 'ensayo_movimientos', 'ensayo_soportes', 'ensayo_creditoMovs', 'ensayo_clientes', 'ensayo_config'];
+      allow delete: if esAdmin() && col in ['ensayo_vales', 'ensayo_movimientos', 'ensayo_soportes', 'ensayo_creditoMovs', 'ensayo_clientes', 'ensayo_config'];
+    }
     // Ingresos y egresos: solo administrador y cajero.
     // El cajero registra y corrige lo suyo del mismo día; solo el administrador anula. Nunca se borran.
     match /movimientos/{id} {
