@@ -62,6 +62,17 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
     if (url.pathname === "/time") return json({ t: Date.now() }); // hora exacta para que todos los equipos midan igual
     if (url.pathname === "/vapid") return json({ publicKey: env.VAPID_PUBLIC || null });
+    // Generación de fotos de platos con IA (FLUX en Workers AI). Solo usuarios con sesión en la app.
+    if (url.pathname === "/imagen" && req.method === "POST") {
+      try { await verificarFirebase((req.headers.get("Authorization") || "").replace(/^Bearer /, ""), env.FIREBASE_PROJECT); }
+      catch (e) { return json({ error: "sin autorización" }, 401); }
+      if (!env.AI) return json({ error: "La IA no está activada en el servidor" }, 503);
+      const { prompt = "", seed } = await req.json();
+      try {
+        const r = await env.AI.run("@cf/black-forest-labs/flux-1-schnell", { prompt: String(prompt).slice(0, 1800), steps: 8, ...(seed ? { seed: Number(seed) } : {}) });
+        return json({ imagen: r.image });
+      } catch (e) { return json({ error: String(e.message || e) }, 500); }
+    }
     if (url.pathname !== "/notify" || req.method !== "POST") return json({ ok: true, servicio: "Casa Rosada · notificaciones" });
     try { await verificarFirebase((req.headers.get("Authorization") || "").replace(/^Bearer /, ""), env.FIREBASE_PROJECT); }
     catch (e) { return json({ error: "sin autorización" }, 401); }

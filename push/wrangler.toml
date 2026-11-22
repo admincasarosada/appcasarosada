@@ -6,3 +6,6 @@ workers_dev = true
 [vars]
 FIREBASE_PROJECT = "appcasarosada"
 VAPID_SUBJECT = "mailto:admin@casarosada.co"
+
+[ai]
+binding = "AI"
