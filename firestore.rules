@@ -70,12 +70,12 @@ service cloud.firestore {
         // Cajero: cobrar (no puede anular ni reabrir)
         || (tieneRol(['cajero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado in ['abierto', 'pagado']
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado']))
         // Mesero: agregar productos y avisar que pidieron la cuenta, solo con el vale abierto
         || (tieneRol(['mesero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado == 'abierto'
             && request.resource.data.items.size() >= resource.data.items.size()
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado']))
         // Cocina: solo el estado de preparación
         || (tieneRol(['cocina']) && cambia(['cocinaEstado', 'actualizado', 'despachos', 'rondaDespachada']));
       allow delete: if false; // los vales nunca se borran: se anulan con motivo

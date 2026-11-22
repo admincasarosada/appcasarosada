@@ -121,6 +121,13 @@ Los permisos se controlan **también en el servidor** con `firestore.rules`. Aun
 
 ## Domicilios
 
+**Pestaña 🛵 Domicilios** (administración, caja y meseros):
+- **En cocina:** domicilios pendientes de despacho, con cronómetro.
+- **Listos para entregar:** cocina ya los despachó; muestra quién los lleva.
+- **Entregado · cerrar:** el domiciliario indica cómo pagó el cliente (Efectivo, QR o Crédito) y el domicilio pasa a caja, donde se confirma el pago (si fue por QR, se elige la cuenta donde llegó).
+- **Cerrados hoy:** historial del día con quién entregó, pago reportado, tiempo y estado en caja.
+
+
 - **Crear un domicilio:** en **Mesas**, botón **🛵 Nuevo domicilio**. Disponible para administradores, cajeros y meseros.
 - **Datos que se piden:** celular, nombre, dirección, barrio o indicaciones y, si aplica, el valor del domicilio (envío).
 - **Clientes conocidos:** si el cliente autoriza guardar sus datos (Ley 1581 de 2012), la próxima vez basta con escribir su celular y se cargan solos.
