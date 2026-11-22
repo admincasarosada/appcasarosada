@@ -78,11 +78,11 @@ service cloud.firestore {
         // Cajero: cobrar (no puede anular ni reabrir)
         || (tieneRol(['cajero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado in ['abierto', 'pagado']
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor', 'credito']))
         // Mesero: agregar productos y avisar que pidieron la cuenta, solo con el vale abierto
         || (tieneRol(['mesero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado == 'abierto'
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor', 'credito']))
         // Cocina: solo el estado de preparación
         // Mesero o cajero: un ticket que queda sin productos se anula solo
         || (tieneRol(['mesero', 'cajero']) && resource.data.estado == 'abierto'
@@ -99,6 +99,20 @@ service cloud.firestore {
         && (request.resource.data.valeId == sid || request.resource.data.valeId + '_caja' == sid)
         && request.resource.data.img is string
         && request.resource.data.img.size() < 900000;
+      allow delete: if false;
+    }
+    // Créditos: clientes autorizados (solo administración los crea o modifica). Meseros y caja los consultan para asignarlos.
+    match /creditos/{id} {
+      allow read: if tieneRol(['admin', 'mesero', 'cajero']);
+      allow write: if esAdmin();
+    }
+    // Movimientos de crédito: cargos (tickets confirmados en caja) y abonos (solo administración). Nunca se borran.
+    match /creditoMovs/{id} {
+      allow read: if tieneRol(['admin', 'cajero']);
+      allow create: if esAdmin()
+        || (tieneRol(['cajero']) && request.resource.data.tipo == 'cargo' && request.resource.data.porUid == request.auth.uid
+            && request.resource.data.valor is number && request.resource.data.valor > 0);
+      allow update: if esAdmin();
       allow delete: if false;
     }
     // Ingresos y egresos: solo administrador y cajero.
