@@ -1273,7 +1273,7 @@ function botonAlmuerzo(){
   const m=menuHoy();
   if(!m) return `<div class="banner" style="margin-bottom:10px">No hay menú del día definido para hoy.</div>`;
   return `<button class="pri" style="width:100%;margin-bottom:10px;padding:14px;font-size:16px;text-align:left" onclick="accion.almAbrir()">
-    🍽 <b>${nAlm()?"Agregar otro almuerzo":"Almuerzo del día"}</b>${nAlm()?` <span class="dot" style="background:#fff;color:var(--rosa)">${nAlm()} en el ticket</span>`:""}<br><span style="font-size:13px;opacity:.9">${m.proteinas.map(p=>esc(p.nombre)).join(" · ")}</span></button>`;
+    🍽 <b>${nAlm()?"Agregar otro almuerzo":"Almuerzo del día"}</b>${nAlm()?` <span class="dot" style="background:#fff;color:var(--rosa)">${nAlm()} en el ticket</span>`:""}<br><span style="font-size:13px;opacity:.9">Va a cocina</span></button>`;
 }
 /* Detalle de un ítem (para ticket, cocina y caja) */
 const detalleItem = (i,cls="mu") => i.detalle?`<br><span class="${cls}">${esc(i.detalle)}</span>`:"";
