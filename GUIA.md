@@ -110,6 +110,10 @@ Los permisos se controlan **también en el servidor** con `firestore.rules`. Aun
 6. Si alguien presenta un ticket ya pagado o anulado, la caja lo ve de inmediato con el sello correspondiente.
 7. Los tickets **nunca se borran**: solo el administrador los anula, con motivo, y todo queda en reportes.
 
+## Modo de pruebas (solo administrador)
+
+El botón **🧪 Modo de pruebas** del encabezado abre una copia de práctica con un menú estándar y las mesas de los dos pisos. Con **"Ver como"** se cambia entre administrador, meseros (Andrés, Tania, Mateo), cocina y caja para recorrer todo el proceso en un solo equipo. Nada de lo que se registre ahí pasa al sistema real. **↺ Reiniciar datos** borra lo de prueba y **Salir de pruebas** vuelve al sistema real.
+
 ## Atención: cocina, servido y envío a caja
 
 - **Cocina** ve solo los pedidos por despachar: mesas, mostrador y domicilios. Cada pedido muestra el tipo de servicio, el número de mesa o la dirección, las notas y los ajustes de cada plato, y un cronómetro.
