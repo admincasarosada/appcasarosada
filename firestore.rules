@@ -55,6 +55,9 @@ service cloud.firestore {
     match /menus/{fecha}  {
       allow read: if activo();
       allow write: if esAdmin();
+      // Caja puede cargar el menú del día y sus precios si el administrador le dio ese permiso
+      allow create, update: if tieneRol(['cajero'])
+        && get(/databases/$(database)/documents/config/negocio).data.get('permisos', {}).get('cajero', {}).get('menu', false) == true;
       // Cocina (y caja en modo mesero) solo marcan lo que «se acabó»
       allow update: if tieneRol(['cocina', 'cajero', 'mesero']) && cambia(['agotados', 'agotadosEn']);
     }
