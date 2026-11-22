@@ -56,7 +56,7 @@ service cloud.firestore {
       allow read: if activo();
       allow write: if esAdmin();
       // Cocina (y caja en modo mesero) solo marcan lo que «se acabó»
-      allow update: if tieneRol(['cocina', 'cajero']) && cambia(['agotados', 'agotadosEn']);
+      allow update: if tieneRol(['cocina', 'cajero', 'mesero']) && cambia(['agotados', 'agotadosEn']);
     }
     // Clientes de domicilio (solo con autorización de datos): meseros, caja y administración
     match /clientes/{tel} {
@@ -79,7 +79,7 @@ service cloud.firestore {
         // Mesero: agregar productos y avisar que pidieron la cuenta, solo con el vale abierto
         || (tieneRol(['mesero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado == 'abierto'
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada']))
         // Cocina: solo el estado de preparación
         // Mesero o cajero: un ticket que queda sin productos se anula solo
         || (tieneRol(['mesero', 'cajero']) && resource.data.estado == 'abierto'
