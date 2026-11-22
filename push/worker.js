@@ -60,6 +60,7 @@ export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
+    if (url.pathname === "/time") return json({ t: Date.now() }); // hora exacta para que todos los equipos midan igual
     if (url.pathname === "/vapid") return json({ publicKey: env.VAPID_PUBLIC || null });
     if (url.pathname !== "/notify" || req.method !== "POST") return json({ ok: true, servicio: "Casa Rosada · notificaciones" });
     try { await verificarFirebase((req.headers.get("Authorization") || "").replace(/^Bearer /, ""), env.FIREBASE_PROJECT); }
