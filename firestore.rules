@@ -88,7 +88,7 @@ service cloud.firestore {
         || (tieneRol(['mesero', 'cajero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado == 'anulado' && request.resource.data.items.size() == 0
             && cambia(['items', 'total', 'cambios', 'actualizado', 'estado', 'anulacion']))
-        || (tieneRol(['cocina']) && cambia(['cocinaEstado', 'actualizado', 'despachos', 'rondaDespachada']));
+        || (tieneRol(['cocina']) && cambia(['cocinaEstado', 'actualizado', 'despachos', 'rondaDespachada', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'pidioCuenta', 'enCajaEn', 'enCajaPor']));
       allow delete: if false; // los vales nunca se borran: se anulan con motivo
     }
     // Foto del soporte de pago por QR / llave (una por ticket). Nunca se borra.
