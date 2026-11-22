@@ -110,6 +110,14 @@ Los permisos se controlan **también en el servidor** con `firestore.rules`. Aun
 6. Si alguien presenta un ticket ya pagado o anulado, la caja lo ve de inmediato con el sello correspondiente.
 7. Los tickets **nunca se borran**: solo el administrador los anula, con motivo, y todo queda en reportes.
 
+## Nueva solicitud (toma de pedidos)
+
+1. **Elegir el servicio:** Servicio a la mesa, Domicilio, Para llevar en icopor, Para llevar en plato o Productos varios. Aquí no se muestran precios; los recargos de cada modalidad se suman solos en el ticket.
+2. **Mesa:** se abre el plano del piso; una mesa libre inicia el pedido y una ocupada abre su ticket para editarlo.
+3. **Armar el ticket:** almuerzos y productos. El total aparece en el ticket.
+4. **Editar:** el mesero puede agregar adicionales en cualquier momento y quitar lo que cocina aún no ha despachado (con motivo, que queda en el historial de caja). Si el ticket queda sin productos, se anula solo.
+5. **Todo termina en caja:** cada ticket aparece en Caja desde que se crea y solo sale de ahí al cobrarse o anularse. Caja avisa si quedan tickets de días anteriores sin cerrar.
+
 ## Modo de pruebas (solo administrador)
 
 El botón **🧪 Modo de pruebas** del encabezado abre una copia de práctica con un menú estándar y las mesas de los dos pisos. Con **"Ver como"** se cambia entre administrador, meseros (Andrés, Tania, Mateo), cocina y caja para recorrer todo el proceso en un solo equipo. Nada de lo que se registre ahí pasa al sistema real. **↺ Reiniciar datos** borra lo de prueba y **Salir de pruebas** vuelve al sistema real.
