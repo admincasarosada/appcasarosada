@@ -92,10 +92,12 @@ service cloud.firestore {
       allow delete: if false; // los vales nunca se borran: se anulan con motivo
     }
     // Foto del soporte de pago por QR / llave (una por ticket). Nunca se borra.
-    match /soportes/{valeId} {
+    // Id = ticket (foto del domiciliario) o ticket_caja (foto tomada en caja al cobrar)
+    match /soportes/{sid} {
       allow read: if tieneRol(['admin', 'cajero', 'mesero']);
       allow create, update: if tieneRol(['admin', 'cajero', 'mesero'])
-        && request.resource.data.valeId == valeId && request.resource.data.img is string
+        && (request.resource.data.valeId == sid || request.resource.data.valeId + '_caja' == sid)
+        && request.resource.data.img is string
         && request.resource.data.img.size() < 900000;
       allow delete: if false;
     }
