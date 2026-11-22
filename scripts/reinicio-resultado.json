@@ -1,0 +1,18 @@
+{
+  "fecha": "2026-11-22T06:29:10.880Z",
+  "borrados": {
+    "vales": 3,
+    "movimientos": 0,
+    "soportes": 0,
+    "menus": 2,
+    "clientes": 0
+  },
+  "contador": "reiniciado (próximo ticket 000001)",
+  "conservados": {
+    "users": 6,
+    "logins": 5,
+    "mesas": 24,
+    "productos": 0,
+    "negocio": true
+  }
+}
