@@ -101,10 +101,11 @@ service cloud.firestore {
         && request.resource.data.img.size() < 900000;
       allow delete: if false;
     }
-    // Créditos: clientes autorizados (solo administración los crea o modifica). Meseros y caja los consultan para asignarlos.
+    // Créditos: clientes autorizados. Caja y administración los crean (también al momento de cobrar); solo administración los modifica.
     match /creditos/{id} {
       allow read: if tieneRol(['admin', 'mesero', 'cajero']);
-      allow write: if esAdmin();
+      allow create: if tieneRol(['admin', 'cajero']);
+      allow update, delete: if esAdmin();
     }
     // Movimientos de crédito: cargos (tickets confirmados en caja) y abonos (solo administración). Nunca se borran.
     match /creditoMovs/{id} {
