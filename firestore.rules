@@ -78,11 +78,11 @@ service cloud.firestore {
         // Cajero: cobrar (no puede anular ni reabrir)
         || (tieneRol(['cajero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado in ['abierto', 'pagado']
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor', 'credito']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor', 'credito', 'creditoIds']))
         // Mesero: agregar productos y avisar que pidieron la cuenta, solo con el vale abierto
         || (tieneRol(['mesero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado == 'abierto'
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor', 'credito']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor', 'credito', 'creditoIds']))
         // Cocina: solo el estado de preparación
         // Mesero o cajero: un ticket que queda sin productos se anula solo
         || (tieneRol(['mesero', 'cajero']) && resource.data.estado == 'abierto'
