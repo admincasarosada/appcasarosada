@@ -78,7 +78,7 @@ service cloud.firestore {
         // Cajero: cobrar (no puede anular ni reabrir)
         || (tieneRol(['cajero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado in ['abierto', 'pagado']
-            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor', 'credito', 'creditoIds']))
+            && cambia(['items', 'total', 'ronda', 'actualizado', 'cocinaEstado', 'enviado', 'pidioCuenta', 'estado', 'pago', 'pagoFecha', 'cliente', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'enCajaEn', 'enCajaPor', 'pagoReportado', 'cambios', 'soporte', 'despachos', 'rondaDespachada', 'salidaEn', 'salidaPor', 'credito', 'creditoIds', 'observaciones']))
         // Mesero: agregar productos y avisar que pidieron la cuenta, solo con el vale abierto
         || (tieneRol(['mesero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado == 'abierto'
@@ -88,6 +88,8 @@ service cloud.firestore {
         || (tieneRol(['mesero', 'cajero']) && resource.data.estado == 'abierto'
             && request.resource.data.estado == 'anulado' && request.resource.data.items.size() == 0
             && cambia(['items', 'total', 'cambios', 'actualizado', 'estado', 'anulacion']))
+        // Cajero: dejar observaciones en cualquier ticket (también ya pagado o anulado)
+        || (tieneRol(['cajero']) && cambia(['observaciones', 'actualizado']))
         || (tieneRol(['cocina']) && cambia(['cocinaEstado', 'actualizado', 'despachos', 'rondaDespachada', 'servidoEn', 'servidoPor', 'rondaServida', 'enCaja', 'pidioCuenta', 'enCajaEn', 'enCajaPor']));
       allow delete: if false; // los vales nunca se borran: se anulan con motivo
     }
