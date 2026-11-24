@@ -1,1 +1,0 @@
-Respaldo y reinicio autorizado por el dueño el 23/11/2026 a las 20:38 para empezar en limpio el 24/11/2026: borrar todo lo movido (tickets, ingresos y egresos, cierres, soportes, arqueos, movimientos de crédito y ensayo), conservando usuarios, mesas, carta, menús y clientes.

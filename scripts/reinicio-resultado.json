@@ -1,18 +1,8 @@
 {
-  "fecha": "2026-11-22T06:29:10.880Z",
-  "borrados": {
-    "vales": 3,
-    "movimientos": 0,
-    "soportes": 0,
-    "menus": 2,
-    "clientes": 0
-  },
-  "contador": "reiniciado (próximo ticket 000001)",
-  "conservados": {
-    "users": 6,
-    "logins": 5,
-    "mesas": 24,
-    "productos": 0,
-    "negocio": true
-  }
+  "fecha": "2026-11-24T01:40:42.452Z",
+  "respaldo": "respaldos/2026-11-23-1795484442452",
+  "respaldados": { "vales": 37, "movimientos": 20, "soportes": 4, "cierres": 1, "creditoMovs": 5 },
+  "borrados": { "vales": 37, "movimientos": 20, "soportes": 4, "cierres": 1, "creditoMovs": 5 },
+  "contador": "reiniciado (próximo ticket 000001); antes iba en 37",
+  "conservados": { "users": 7, "logins": 6, "mesas": 26, "productos": 8, "menus": 1, "clientes": 5, "creditos": 6 }
 }
