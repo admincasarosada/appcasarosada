@@ -1,0 +1,45 @@
+# Respaldo y reinicio ÚNICO de los datos de operación (pedido por el dueño el 23/11/2026 para empezar en limpio el 24/11).
+# Se activa solo cuando se sube scripts/reinicio-autorizado.txt; al terminar lo borra junto con este flujo y el script,
+# para que no vuelva a ejecutarse. La app no tiene ninguna opción de reinicio.
+name: Reinicio único de datos
+
+on:
+  push:
+    branches: [main]
+    paths: [scripts/reinicio-autorizado.txt]
+
+permissions:
+  contents: write
+
+jobs:
+  reinicio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Llave de Firebase
+        env:
+          LLAVE: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$LLAVE" ]; then echo "Falta el secreto FIREBASE_SERVICE_ACCOUNT"; exit 1; fi
+          printf '%s' "$LLAVE" > "$RUNNER_TEMP/llave.json"
+      - name: Respaldar y reiniciar
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/llave.json
+        run: |
+          npm install --no-save --no-audit --no-fund firebase-admin@13
+          node scripts/reiniciar-datos.js
+      - name: Borrar llave
+        if: always()
+        run: rm -f "$RUNNER_TEMP/llave.json"
+      - name: Dejar constancia y desactivar el reinicio
+        run: |
+          git config user.name "reinicio-casarosada"
+          git config user.email "reinicio@casarosada.app"
+          git pull -q --rebase
+          git rm -q scripts/reinicio-autorizado.txt .github/workflows/reinicio-datos.yml scripts/reiniciar-datos.js
+          git add scripts/reinicio-resultado.json
+          git commit -m "Respaldo y reinicio de datos ejecutado: constancia en scripts/reinicio-resultado.json"
+          git push
