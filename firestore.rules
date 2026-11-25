@@ -145,6 +145,9 @@ service cloud.firestore {
       allow delete: if false;
     }
     // Arqueos guardados (solo para consulta): caja y administración los guardan; solo administración los borra
+    match /cuentas/{id} {
+      allow read, write: if esAdmin();
+    }
     match /arqueos/{id} {
       allow read, create: if tieneRol(['admin', 'cajero']);
       allow update, delete: if esAdmin();
